@@ -17,7 +17,7 @@ cache_collection = get_database() # storing the function to get the cache db in 
 
 
 # backend api url:
-backend_api_url = 'http://localhost:5000' # more reusable when storing the start of the url for the endpoints for the backend api.
+backend_api_url = 'https://cloud-backend-api.onrender.com' # more reusable when storing the start of the url for the endpoints for the backend api.
 
 
 # Function to periodically clean up unused cache entries
