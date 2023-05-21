@@ -2,18 +2,18 @@
   "version": 2,
   "builds": [
     {
-      "src": "main.py",
+      "src": "__main__.py",
       "use": "@vercel/python"
     }
   ],
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "/main.py"
+      "dest": "/__main__.py"
     }
   ],
   "env": {
     "FLASK_ENV": "production",
-    "FLASK_APP": "main.py"
+    "FLASK_APP": "__main__.py"
   }
 }
