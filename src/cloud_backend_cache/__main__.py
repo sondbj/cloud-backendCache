@@ -1,6 +1,6 @@
 import os
 from flask import Flask, request, jsonify, Response
-from db import get_database  # importing the get_database for our cache database
+from .db import get_database  # importing the get_database for our cache database
 import requests
 from datetime import datetime, timedelta
 import threading
