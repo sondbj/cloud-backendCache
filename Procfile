@@ -1,1 +1,1 @@
-web: gunicorn src/cloud_backend_cache/__main__:app
+web: gunicorn src.cloud_backend_cache.__main__:app
