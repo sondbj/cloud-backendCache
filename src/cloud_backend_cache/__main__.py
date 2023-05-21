@@ -1,3 +1,4 @@
+#All of the imports
 import os
 from flask import Flask, request, jsonify, Response
 from .db import get_database  # importing the get_database for our cache database
@@ -7,7 +8,7 @@ import threading
 import time
 from flask_cors import CORS
 from bson import ObjectId
-import json
+
 
 app = Flask(__name__)
 CORS(app)  # need to in order to allow the frontend to access the backend api
@@ -21,7 +22,7 @@ cache_collection = (
 backend_api_url = "https://cloud-backend-api.onrender.com"  # more reusable when storing the start of the url for the endpoints for the backend api.
 
 
-# Function to periodically clean up unused cache entries
+# function to periodically clean up unused cache entries
 def cleanup_cache():
     while True:
 # delete cache entries that haven't been accessed for a certain duration, in this its 10 days
@@ -33,11 +34,11 @@ def cleanup_cache():
 cleanup_thread = threading.Thread(target=cleanup_cache)
 cleanup_thread.start()
 
-
+# function to add "security"
 def validate_security_key(key):
     expected_key = "assignment2"
 
-    # Compare the provided key with the expected key
+    # compare the provided key with the expected key
     if key == expected_key:
         return True
 
@@ -49,18 +50,18 @@ def get_contacts(update_cache=False):
     cache_key = "contacts"
     security_key = request.headers.get(
         "X-Security-Key"
-    )  # Get the security key from the request headers
+    )  # get the security key from the request headers
 
     if validate_security_key(
         security_key
-    ):  # Implement your security key validation logic
+    ):  # implement your security key validation logic
         if update_cache:
-            # Delete the old collection and create a new one with the updated info
+            # delete the old collection and create a new one with the updated info
             cache_collection.delete_one({"_id": cache_key})
 
-        cache_entry = cache_collection.find_one({"_id": cache_key})
-        if cache_entry:
-            data = cache_entry["data"]
+        cache_entry = cache_collection.find_one({"_id": cache_key}) # checks if the cache id exists in the database
+        if cache_entry:  # if cache exists
+            data = cache_entry["data"]   
             last_accessed = cache_entry.get("last_accessed")
             if last_accessed is not None:
                 # Update last_accessed timestamp to the current time
@@ -68,20 +69,21 @@ def get_contacts(update_cache=False):
                     {"_id": cache_key}, {"$set": {"last_accessed": datetime.now()}}
                 )
         else:
-            backend_endpoint = "/contacts"
-            response = requests.get(backend_api_url + backend_endpoint)
-            data = response.json()
+            backend_endpoint = "/contacts" ## if cache does not exist fetch from backend
+            response = requests.get(backend_api_url + backend_endpoint) #combines the backend server url with the backend endpoint
+            data = response.json() # gets the data as json 
 
             cache_collection.insert_one(
-                {"_id": cache_key, "data": data, "last_accessed": datetime.now()}
+                {"_id": cache_key, "data": data, "last_accessed": datetime.now()} # inserts it into cache
             )
 
         return jsonify(data)
     else:
         return jsonify({"error": "Invalid security key"}), 401
 
+# Have basically the same code to fetch from either the cache database or the backend for the functions below
 
-# sjekke om man kan lete i den all contacts cachen etter id???
+# caches a spesific contact based on id
 @app.route("/contacts/<string:id>")  # contacts by id
 def get_contactById(id):
     cache_key = f"contacts_{id}"
@@ -182,6 +184,7 @@ def cache_upload_vcard():
     # Return the response from the backend API to the client
     return response.content, response.status_code, response.headers.items()
 
+#Fetches and stores as vcard
 @app.route("/contacts/vcard", methods=["GET"])
 def get_all_contacts_vcard():
     cache_key = "contacts_vcard"
