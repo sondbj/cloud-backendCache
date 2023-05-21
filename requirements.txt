@@ -9,3 +9,10 @@ Flask-Cors==3.0.10
 requests==2.30.0
 bson==0.5.10
 pymongo==4.3.3
+pytest==7.3.1
+pytest-cov==4.0.0
+mypy==1.2.0
+flake8==6.0.0
+black==23.3.0
+tox==4.4.12
+setuptools==67.6.1
